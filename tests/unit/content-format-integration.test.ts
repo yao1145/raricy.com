@@ -145,7 +145,7 @@ describe('博客格式：validateBlogData / 落库 / 读出口', () => {
     });
     const row = await prisma.blogContent.findUnique({ where: { blogId: id } });
     expect(row?.format).toBe('reactive');
-    expect(row?.syntaxVersion).toBe('local-draft-2');
+    expect(row?.syntaxVersion).toBe('local-draft-3');
     const snap = await prisma.reactiveSnapshot.findFirst({ where: { kind: 'blog', contentId: id } });
     expect(snap).not.toBeNull();
     expect(snap?.scope).toBe('external');
@@ -160,7 +160,7 @@ describe('博客格式：validateBlogData / 落库 / 读出口', () => {
     });
     const snapshot = await prisma.reactiveSnapshot.findFirst({ where: { kind: 'blog', contentId: id } });
     expect(snapshot).not.toBeNull();
-    expect(snapshot!.compilerVersion).toBe('reactive-md/0.6.1');
+    expect(snapshot!.compilerVersion).toBe('reactive-md/0.7.0');
     const document = JSON.parse(snapshot!.documentJson);
     expect(document.nodes[0]).toMatchObject({ type: 'fallback', value: '<div style="color:red">{{ missing }}' });
     expect(document.bindings.n).toBeDefined();
@@ -216,7 +216,7 @@ describe('博客格式：validateBlogData / 落库 / 读出口', () => {
     const row = await prisma.blogContent.findUnique({ where: { blogId: id } });
     expect(row?.content).toBe('# 新 reactive\n\n正文');
     expect(row?.format).toBe('reactive');
-    expect(row?.syntaxVersion).toBe('local-draft-2');
+    expect(row?.syntaxVersion).toBe('local-draft-3');
     expect(await prisma.reactiveSnapshot.count({ where: { kind: 'blog', contentId: id } })).toBe(1);
 
     const downgraded = await updateBlog(
@@ -277,7 +277,7 @@ describe('剪贴板格式：createClip / updateClip / getClip / resolvePublicCli
     if (reactive.ok) {
       const row = await prisma.clipText.findUnique({ where: { clipId: reactive.id } });
       expect(row?.format).toBe('reactive');
-      expect(row?.syntaxVersion).toBe('local-draft-2');
+      expect(row?.syntaxVersion).toBe('local-draft-3');
       expect(
         await prisma.reactiveSnapshot.count({ where: { kind: 'clipboard', contentId: reactive.id } })
       ).toBe(1);
@@ -313,7 +313,7 @@ describe('剪贴板格式：createClip / updateClip / getClip / resolvePublicCli
     const reactive = await prisma.clipText.findUnique({ where: { clipId: reactiveId } });
     expect(reactive?.content).toBe('# 改过的 reactive\n\n正文');
     expect(reactive?.format).toBe('reactive');
-    expect(reactive?.syntaxVersion).toBe('local-draft-2');
+    expect(reactive?.syntaxVersion).toBe('local-draft-3');
     expect(
       await prisma.reactiveSnapshot.count({ where: { kind: 'clipboard', contentId: reactiveId } })
     ).toBe(1);
